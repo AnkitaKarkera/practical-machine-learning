@@ -47,14 +47,15 @@ dim(trainRaw)
 dim(testRaw)
 ```
 
-The training data set contains 19622 observations and 160 variables, while the testing data set contains 20 observations and 160 variables. The “classe” variable in the training set is the outcome to predict.  
+The training data set contains 19622 observations and 160 variables, while the testing data set contains 20 observations and 160 variables. 
+The “classe” variable in the training set is the outcome to predict.  
 
-Clean the Data
+Cleaning the Data
 --------------
 ```{r}
 sum(complete.cases(trainRaw))
-trainRaw <- trainRaw[, colSums(is.na(trainRaw)) == 0] 
-testRaw <- testRaw[, colSums(is.na(testRaw)) == 0] 
+trainRaw <- trainRaw[, colSums(is.na(trainRaw))==0] 
+testRaw <- testRaw[, colSums(is.na(testRaw))==0] 
 ```
 We get rid of some columns that do not contribute much to the accelerometer measurements.  
 ```{r}
@@ -67,7 +68,7 @@ testRemove <- grepl("^X|timestamp|window", names(testRaw))
 testRaw <- testRaw[, !testRemove]
 testCleaned <- testRaw[, sapply(testRaw, is.numeric)]
 ```
-Slice the Data
+Slicing the Data
 --------------
 
 Then, we can split the cleaned training set into a pure training data set (70%) and a validation data set (30%). 
@@ -86,7 +87,7 @@ controlRf <- trainControl(method="cv", 5)
 modelRf <- train(classe ~ ., data=trainData, method="rf", trControl=controlRf, ntree=250)
 modelRf
 ```
-Estimate the performance of the model on the validation data set.  
+To Estimate the performance of the model on the validation data set.  
 
 ```{r}
 predictRf <- predict(modelRf, testData)
@@ -107,7 +108,6 @@ Now, we apply the model to the original testing data set downloaded from the dat
 result <- predict(modelRf, testCleaned[, -length(names(testCleaned))])
 result
 ```
-Appendix
 1. Correlation Matrix Visualization  
 
 ```{r}
@@ -118,6 +118,6 @@ corrplot(corrPlot, method="color")
 2. Tree Visualization  
 
 ```{r}
-treeModel <-  rpart(classe ~ ., data=trainData, method="class")
+treeModel <-  rpart(classe ~ .,data=trainData,method="class")
 prp(treeModel) 
 ```
